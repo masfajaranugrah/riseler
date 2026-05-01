@@ -1,0 +1,508 @@
+{
+  "menu": [
+    {
+      "name": "Dashboard",
+      "icon": "menu-icon tf-icons ri-home-smile-line",
+      "slug": "dashboard.welcome",
+      "url": "/dashboard",
+      "roles": [
+        "administrator",
+        "admin"
+      ]
+    },
+    {
+      "name": "Tagihan",
+      "icon": "menu-icon tf-icons ri-receipt-line",
+      "slug": "app-user",
+      "roles": [
+        "administrator",
+        "admin"
+      ],
+      "submenu": [
+        {
+          "url": "/dashboard/admin/tagihan",
+          "name": "List Tagihan",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-file-list-3-line"
+        },
+        {
+          "url": "/dashboard/admin/tagihan/proses",
+          "name": "Verifikasi Tagihan",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-checkbox-circle-line"
+        },
+        {
+          "url": "/dashboard/admin/tagihan/lunas",
+          "name": "List Pembayaran Lunas",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-check-double-line"
+        }
+      ]
+    },
+    {
+      "name": "Barang",
+      "icon": "menu-icon tf-icons ri-archive-drawer-line",
+      "slug": "app-user",
+      "roles": "logistic",
+      "submenu": [
+        {
+          "url": "/dashboard/admin/barangs",
+          "name": "Barang",
+          "slug": "app-user-list",
+          "roles": "logistic",
+          "icon": "ri-box-3-line"
+        },
+        {
+          "url": "/dashboard/admin/barang-masuks",
+          "name": "Barang Masuk",
+          "slug": "app-user-list",
+          "roles": "logistic",
+          "icon": "ri-inbox-unarchive-line"
+        },
+        {
+          "url": "/dashboard/admin/barang-keluar",
+          "name": "Barang Keluar",
+          "slug": "app-user-list",
+          "roles": "logistic",
+          "icon": "ri-inbox-archive-line"
+        }
+      ]
+    },
+    {
+      "name": "Laporan Kabel",
+      "icon": "menu-icon tf-icons ri-file-chart-line",
+      "slug": "app-logistik-laporan-kabel",
+      "roles": "logistic",
+      "submenu": [
+        {
+          "url": "/dashboard/logistik/laporan-kabel",
+          "name": "Semua Laporan",
+          "slug": "app-logistik-laporan-kabel-list",
+          "roles": "logistic",
+          "icon": "ri-list-check"
+        }
+      ]
+    },
+    {
+      "name": "Pelanggan",
+      "icon": "menu-icon tf-icons ri-group-line",
+      "slug": "app-user",
+      "roles": [
+        "administrator",
+        "admin"
+      ],
+      "submenu": [
+        {
+          "url": "/dashboard/admin/pelanggan",
+          "name": "List",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-user-search-line"
+        },
+        {
+          "url": "/dashboard/admin/pelanggan/upload/data",
+          "name": "Upload Excel",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-file-excel-line"
+        }
+      ]
+    },
+    {
+      "name": "Paket",
+      "icon": "menu-icon tf-icons ri-box-3-line",
+      "slug": "app-user",
+      "roles": [
+        "administrator",
+        "admin"
+      ],
+      "submenu": [
+        {
+          "url": "/dashboard/admin/paket",
+          "name": "List Paket",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-stack-line"
+        }
+      ]
+    },
+    {
+      "name": "Akun",
+      "icon": "menu-icon tf-icons ri-user-settings-line",
+      "slug": "app-user",
+      "roles": "administrator",
+      "submenu": [
+        {
+          "url": "/dashboard/admin/users",
+          "name": "List Akun",
+          "slug": "app-user-list",
+          "roles": "administrator",
+          "icon": "ri-user-star-line"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Data Ticket",
+      "roles": "customer_service"
+    },
+    {
+      "name": "Ticket",
+      "icon": "menu-icon tf-icons ri-customer-service-2-line",
+      "slug": "app-user",
+      "roles": "customer_service",
+      "submenu": [
+        {
+          "url": "/dashboard/cs/tickets",
+          "name": "List Ticket",
+          "slug": "app-user-list",
+          "roles": "customer_service",
+          "icon": "ri-ticket-2-line"
+        },
+        {
+          "url": "/dashboard/cs/tickets/finished",
+          "name": "Proses Ticket",
+          "slug": "app-user-list",
+          "roles": "customer_service",
+          "icon": "ri-loader-4-line"
+        },
+        {
+          "url": "/dashboard/cs/tickets/approved",
+          "name": "Ticket Selesai",
+          "slug": "app-user-list",
+          "roles": "customer_service",
+          "icon": "ri-check-double-line"
+        }
+      ]
+    },
+    {
+      "menuHeader": "History",
+      "roles": "customer_service"
+    },
+    {
+      "name": "History Ticket",
+      "icon": "menu-icon tf-icons ri-history-line",
+      "slug": "app-user",
+      "roles": "customer_service",
+      "submenu": [
+        {
+          "url": "/dashboard/admin/history/tickets",
+          "name": "History Ticket",
+          "slug": "app-user-list",
+          "roles": "customer_service",
+          "icon": "ri-file-history-line"
+        },
+        {
+          "url": "/dashboard/admin/history/login",
+          "name": "History Login",
+          "slug": "app-user-list",
+          "roles": "customer_service",
+          "icon": "ri-login-circle-line"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Absensi",
+      "roles": "karyawan"
+    },
+    {
+      "name": "Absensi",
+      "icon": "menu-icon tf-icons ri-fingerprint-line",
+      "slug": "app-user",
+      "roles": "karyawan",
+      "submenu": [
+        {
+          "url": "/dashboard/karyawan/absensi",
+          "name": "Absensi",
+          "slug": "app-user-list",
+          "roles": "karyawan",
+          "icon": "ri-user-received-line"
+        }
+      ]
+    },
+    {
+      "name": "Pekerjaan",
+      "icon": "menu-icon tf-icons ri-tools-line",
+      "slug": "app-user",
+      "roles": "team",
+      "submenu": [
+        {
+          "url": "/dashboard/teknisi/jobs",
+          "name": "Pekerjaan",
+          "slug": "app-user-list",
+          "roles": "team",
+          "icon": "ri-task-line"
+        }
+      ]
+    },
+    {
+      "name": "Pekerjaan Selesai",
+      "icon": "menu-icon tf-icons ri-checkbox-multiple-line",
+      "slug": "app-user",
+      "roles": "team",
+      "submenu": [
+        {
+          "url": "/dashboard/teknisi/jobs/approved-jobs",
+          "name": "Selesai",
+          "slug": "app-user-list",
+          "roles": "team",
+          "icon": "ri-check-double-line"
+        }
+      ]
+    },
+    {
+      "name": "Administrasi",
+      "icon": "menu-icon tf-icons ri-pie-chart-line",
+      "slug": "app-user",
+      "roles": [
+        "administrator",
+        "admin"
+      ],
+      "submenu": [
+        {
+          "url": "/dashboard/admin/incomes",
+          "name": "Masuk",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-arrow-down-circle-line"
+        },
+        {
+          "url": "/dashboard/admin/incomes/potongan-ppn",
+          "name": "Potongan PPN",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-percent-line"
+        },
+        {
+          "url": "/dashboard/admin/expenses",
+          "name": "Keluar",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-arrow-up-circle-line"
+        }
+      ]
+    },
+    {
+      "name": "BBP",
+      "icon": "menu-icon tf-icons ri-book-3-line",
+      "slug": "app-user",
+      "roles": "administrator",
+      "submenu": [
+        {
+          "url": "/dashboard/admin/pembukuan/masuk",
+          "name": "Buku Pembantu",
+          "slug": "app-user-list",
+          "roles": "administrator",
+          "icon": "ri-book-mark-line"
+        },
+        {
+          "url": "/dashboard/admin/pembukuan/bbp-ringkasan",
+          "name": "Rugi Laba",
+          "slug": "app-user-list",
+          "roles": "administrator",
+          "icon": "ri-line-chart-line"
+        }
+      ]
+    },
+    {
+      "name": "Tagihan",
+      "icon": "menu-icon tf-icons ri-file-text-line",
+      "slug": "app-user",
+      "roles": "customer",
+      "submenu": [
+        {
+          "url": "dashboard/customer/tagihan",
+          "name": "Tagihan",
+          "slug": "app-user-list",
+          "roles": "customer",
+          "icon": "ri-file-info-line"
+        },
+        {
+          "url": "/dashboard/customer/tagihan/selesai",
+          "name": "Tagihan Lunas",
+          "slug": "app-user-list",
+          "roles": "customer",
+          "icon": "ri-checkbox-circle-line"
+        }
+      ]
+    },
+    {
+      "name": "Backup",
+      "icon": "menu-icon tf-icons ri-database-2-line",
+      "slug": "app-user",
+      "roles": "administrator",
+      "submenu": [
+        {
+          "url": "/dashboard/admin/backup",
+          "name": "Database",
+          "slug": "app-user-list",
+          "roles": "administrator",
+          "icon": "ri-save-3-line"
+        }
+      ]
+    },
+    {
+      "name": "Pelanggan",
+      "icon": "menu-icon tf-icons ri-user-heart-line",
+      "slug": "app-user",
+      "roles": "marketing",
+      "submenu": [
+        {
+          "url": "/dashboard/marketing/pelanggan",
+          "name": "List Pelanggan",
+          "slug": "app-user-list",
+          "roles": "marketing",
+          "icon": "ri-contacts-line"
+        },
+        {
+          "url": "/dashboard/marketing/progres/belum-progres",
+          "name": "Belum Diproses",
+          "slug": "app-marketing-progres-belum",
+          "roles": "marketing",
+          "icon": "ri-time-line"
+        },
+        {
+          "url": "/dashboard/marketing/progres/tarik-kabel",
+          "name": "Tarik Kabel",
+          "slug": "app-marketing-progres-tarik-kabel",
+          "roles": "marketing",
+          "icon": "ri-git-commit-line"
+        },
+        {
+          "url": "/dashboard/marketing/progres/aktivasi",
+          "name": "Aktivasi",
+          "slug": "app-marketing-progres-aktivasi",
+          "roles": "marketing",
+          "icon": "ri-flashlight-line"
+        },
+        {
+          "url": "/dashboard/marketing/progres/registrasi",
+          "name": "Registrasi",
+          "slug": "app-marketing-progres-registrasi",
+          "roles": "marketing",
+          "icon": "ri-checkbox-circle-line"
+        },
+        {
+          "url": "/dashboard/marketing/approve",
+          "name": "Approval Pelanggan",
+          "slug": "app-marketing-approve",
+          "roles": "marketing",
+          "icon": "ri-check-double-line"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Monitoring Marketing",
+      "roles": "directur"
+    },
+    {
+      "name": "Dashboard Directur",
+      "icon": "menu-icon tf-icons ri-line-chart-line",
+      "slug": "app-directur-monitoring",
+      "roles": "directur",
+      "submenu": [
+        {
+          "url": "/dashboard/directur/pelanggan",
+          "name": "Semua Progress",
+          "slug": "app-directur-pelanggan",
+          "roles": "directur",
+          "icon": "ri-dashboard-line"
+        },
+        {
+          "url": "/dashboard/directur/progres/belum-progres",
+          "name": "Belum Diproses",
+          "slug": "app-directur-progres-belum",
+          "roles": "directur",
+          "icon": "ri-time-line"
+        },
+        {
+          "url": "/dashboard/directur/progres/tarik-kabel",
+          "name": "Tarik Kabel",
+          "slug": "app-directur-progres-tarik-kabel",
+          "roles": "directur",
+          "icon": "ri-git-commit-line"
+        },
+        {
+          "url": "/dashboard/directur/progres/aktivasi",
+          "name": "Aktivasi",
+          "slug": "app-directur-progres-aktivasi",
+          "roles": "directur",
+          "icon": "ri-flashlight-line"
+        },
+        {
+          "url": "/dashboard/directur/progres/registrasi",
+          "name": "Registrasi",
+          "slug": "app-directur-progres-registrasi",
+          "roles": "directur",
+          "icon": "ri-checkbox-circle-line"
+        },
+        {
+          "url": "/dashboard/directur/approve",
+          "name": "Approval Pelanggan",
+          "slug": "app-directur-approve",
+          "roles": "directur",
+          "icon": "ri-check-double-line"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Sistem Chat",
+      "roles": "customer_service"
+    },
+    {
+      "name": "Chat Admin",
+      "icon": "menu-icon tf-icons ri-message-3-line",
+      "slug": "app-user",
+      "roles": "customer_service",
+      "submenu": [
+        {
+          "url": "/dashboard/admin/chat",
+          "name": "Chat",
+          "slug": "app-user-list",
+          "roles": "customer_service",
+          "icon": "ri-chat-3-line"
+        }
+      ]
+    },
+    {
+      "menuHeader": "Verifikasi Pembayaran",
+      "roles": "verifikasi"
+    },
+    {
+      "name": "Verifikasi Tagihan",
+      "icon": "menu-icon tf-icons ri-checkbox-circle-line",
+      "slug": "app-user",
+      "url": "/dashboard/admin/tagihan/proses",
+      "roles": "verifikasi"
+    }
+  ]
+}
