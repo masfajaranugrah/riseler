@@ -259,7 +259,8 @@ class TagihanController extends Controller
             }
 
             $nominalTagihan = (float) ($tagihan->harga ?? $tagihan->paket->harga ?? 0);
-            $ppnNominal = (int) round($nominalTagihan * self::PPN_RATE);
+            $kenaPpn = (bool) ($tagihan->pelanggan->kena_ppn ?? true);
+            $ppnNominal = $kenaPpn ? (int) round($nominalTagihan * self::PPN_RATE) : 0;
             $nominalSetelahPotonganPpn = max(0, (int) round($nominalTagihan - $ppnNominal));
 
             // Update status tagihan menjadi lunas
@@ -291,7 +292,7 @@ class TagihanController extends Controller
                 'tanggal_masuk' => now(),
             ]);
 
-            if ($ppnNominal > 0) {
+            if ($kenaPpn && $ppnNominal > 0) {
                 Income::create([
                     'kode' => $this->getKode('potongan ppn'),
                     'kategori' => 'Potongan PPN',
@@ -893,7 +894,8 @@ public function lunas(Request $request)
         }
 
         $nominalTagihan = (float) ($tagihan->harga ?? $tagihan->paket->harga ?? 0);
-        $ppnNominal = (int) round($nominalTagihan * self::PPN_RATE);
+        $kenaPpn = (bool) ($tagihan->pelanggan->kena_ppn ?? true);
+        $ppnNominal = $kenaPpn ? (int) round($nominalTagihan * self::PPN_RATE) : 0;
         $nominalSetelahPotonganPpn = max(0, (int) round($nominalTagihan - $ppnNominal));
 
         // Update status tagihan
@@ -912,7 +914,7 @@ public function lunas(Request $request)
             'tanggal_masuk' => now(),
         ]);
 
-        if ($ppnNominal > 0) {
+        if ($kenaPpn && $ppnNominal > 0) {
             Income::create([
                 'kode' => $this->getKode('potongan ppn'),
                 'kategori' => 'Potongan PPN',

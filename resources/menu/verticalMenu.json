@@ -298,6 +298,16 @@
             "admin"
           ],
           "icon": "ri-arrow-up-circle-line"
+        },
+        {
+          "url": "/dashboard/admin/hutangs",
+          "name": "Hutang",
+          "slug": "app-user-list",
+          "roles": [
+            "administrator",
+            "admin"
+          ],
+          "icon": "ri-file-list-2-line"
         }
       ]
     },

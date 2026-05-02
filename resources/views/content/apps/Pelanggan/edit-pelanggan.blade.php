@@ -827,6 +827,26 @@ document.addEventListener('DOMContentLoaded', function () {
                         @enderror
                     </div>
 
+                    <div class="mb-4">
+                        <label for="kena_ppn" class="form-label">
+                            <i class="ri-percent-line"></i>PPN Pelanggan
+                        </label>
+                        <select
+                            class="form-select @error('kena_ppn') is-invalid @enderror"
+                            id="kena_ppn"
+                            name="kena_ppn"
+                            required>
+                            <option value="1" {{ old('kena_ppn', (string) ((int) ($pelanggan->kena_ppn ?? 1))) === '1' ? 'selected' : '' }}>Ya, kena PPN 11%</option>
+                            <option value="0" {{ old('kena_ppn', (string) ((int) ($pelanggan->kena_ppn ?? 1))) === '0' ? 'selected' : '' }}>Tidak, tanpa PPN</option>
+                        </select>
+                        <small class="form-text-muted">
+                            <i class="ri-information-line me-1"></i>Jika "Ya", saat verifikasi pembayaran otomatis masuk Administrasi Masuk (netto) + Potongan PPN.
+                        </small>
+                        @error('kena_ppn')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <!-- Harga & Masa Aktif -->
                     <div class="row">
                         <div class="col-md-6 mb-4">

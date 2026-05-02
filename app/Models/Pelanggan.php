@@ -50,6 +50,7 @@ class Pelanggan extends Authenticatable
 
         'paket_id',
         'nomer_id',
+        'kena_ppn',
 
         'tanggal_mulai',
         'tanggal_berakhir',

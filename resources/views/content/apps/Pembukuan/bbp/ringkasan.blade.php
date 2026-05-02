@@ -87,6 +87,10 @@
                     <td class="text-end pe-3 pe-lg-4 fw-bold {{ $piutang > 0 ? 'text-warning' : '' }}">Rp {{ number_format($piutang, 0, ',', '.') }}</td>
                   </tr>
                   <tr>
+                    <td class="ps-3 ps-lg-4">Total Hutang <span class="text-muted">(periode berjalan)</span></td>
+                    <td class="text-end pe-3 pe-lg-4 fw-bold text-danger">Rp {{ number_format($totalHutang ?? 0, 0, ',', '.') }}</td>
+                  </tr>
+                  <tr>
                     <td class="ps-3 ps-lg-4">Rugi/Laba</td>
                     <td class="text-end pe-3 pe-lg-4 fw-bold {{ $rugiLaba >= 0 ? 'text-success' : 'text-danger' }}">Rp {{ number_format($rugiLaba, 0, ',', '.') }}</td>
                   </tr>

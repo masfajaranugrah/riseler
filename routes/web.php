@@ -37,6 +37,7 @@ use App\Http\Controllers\CustomerTagihanController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\HutangController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\language\LanguageController;
 use App\Http\Controllers\LaporanController;
@@ -309,6 +310,12 @@ Route::prefix('dashboard/admin/expenses')->group(function () {
     Route::delete('/{id}', [ExpenseController::class, 'destroy'])->name('keluar.destroy');  // Hapus
     Route::get('/export/monthly', [ExpenseController::class, 'exportMonthly'])->name('keluar.export.monthly');
     Route::get('/export/date-range', [ExpenseController::class, 'exportDateRange'])->name('keluar.export.daterange');
+});
+
+Route::prefix('dashboard/admin/hutangs')->group(function () {
+    Route::get('/', [HutangController::class, 'index'])->name('hutang.index');
+    Route::get('/create', [HutangController::class, 'create'])->name('hutang.create');
+    Route::post('/store', [HutangController::class, 'store'])->name('hutang.store');
 });
 
 Route::prefix('dashboard/admin/pembukuan')->group(function () {

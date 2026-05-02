@@ -8,6 +8,7 @@ use App\Models\SaldoAwal;
 use App\Models\Tagihan;
 use App\Models\Paket;
 use App\Models\Pelanggan;
+use App\Models\Hutang;
 use App\Exports\PembukuanTotalExport;
 use App\Exports\BukuPembantuExport;
 use App\Exports\PengeluaranExport;
@@ -491,6 +492,7 @@ class LedgerController extends Controller
         $omsetRealisasi = $pendapatanKotor;
 
         $piutang = max(0, $omsetSeharusnya - $omsetRealisasi);
+        $totalHutang = Hutang::whereBetween('tanggal', [$startDate, $endDate])->sum('jumlah');
         $rugiLaba = $pendapatanBersih - $totalPengeluaran;
 
         $periodeLabel = Carbon::createFromDate($tahun, $bulan, 1)->locale('id')->isoFormat('MMMM YYYY');
@@ -507,6 +509,7 @@ class LedgerController extends Controller
             'omsetSeharusnya',
             'omsetRealisasi',
             'piutang',
+            'totalHutang',
             'rugiLaba'
         );
 
@@ -873,4 +876,3 @@ class LedgerController extends Controller
         return $monthlyData;
     }
 }
-

@@ -247,6 +247,7 @@ public function index(Request $request)
             // Paket
             'paket_id' => 'required|exists:pakets,id',
             'nomer_id' => 'required|string|max:50|unique:pelanggans,nomer_id',
+            'kena_ppn' => 'required|boolean',
 
             // Tanggal
             'tanggal_mulai' => 'nullable|date',
@@ -294,6 +295,7 @@ public function index(Request $request)
 
                 'paket_id' => $paket->id,
                 'nomer_id' => $validated['nomer_id'],
+                'kena_ppn' => (bool) $validated['kena_ppn'],
                 'tanggal_mulai' => $tanggalMulai,
                 'tanggal_berakhir' => $tanggalBerakhir,
 
@@ -352,6 +354,7 @@ public function index(Request $request)
             // Paket
             'paket_id' => 'required|exists:pakets,id',
             'nomer_id' => 'required|string|max:50|unique:pelanggans,nomer_id,'.$pelanggan->id,
+            'kena_ppn' => 'required|boolean',
 
             // Tanggal
             'tanggal_mulai' => 'nullable|date',
@@ -400,6 +403,7 @@ public function index(Request $request)
             // Paket
             'paket_id' => $paket->id,
             'nomer_id' => $validated['nomer_id'],
+            'kena_ppn' => (bool) $validated['kena_ppn'],
             'tanggal_mulai' => $tanggalMulai,
             'tanggal_berakhir' => $tanggalBerakhir,
 

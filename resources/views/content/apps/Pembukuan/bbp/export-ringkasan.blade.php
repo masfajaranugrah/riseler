@@ -52,6 +52,10 @@
             <td style="{{ $piutang > 0 ? 'color: #ff9900;' : '' }}">Rp {{ number_format($piutang, 0, ',', '.') }}</td>
         </tr>
         <tr>
+            <td>Total Hutang (periode berjalan)</td>
+            <td style="color: #ff0000;">Rp {{ number_format($totalHutang ?? 0, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
             <td style="font-weight: bold;">Rugi/Laba</td>
             <td style="font-weight: bold; {{ $rugiLaba >= 0 ? 'color: #00cc00;' : 'color: #ff0000;' }}">Rp {{ number_format($rugiLaba, 0, ',', '.') }}</td>
         </tr>
