@@ -93,12 +93,12 @@ public function exportExcel(Request $request)
 
    public function status(Request $request) 
     {
-        // ? Base query dengan eager loading (Hanya JMK-GK)
+        // ? Base query dengan eager loading (semua pelanggan yang registrasi/approve)
         $baseCondition = function($q) {
             $q->where(function($q2) {
                 $q2->where('progres', Pelanggan::PROGRES_REGISTRASI)
                    ->orWhere('status', 'approve');
-            })->where('nomer_id', 'LIKE', '%JMK-GK%');
+            });
         };
 
         $query = Pelanggan::with([
@@ -168,16 +168,13 @@ public function index(Request $request)
     $statusFilter = $request->get('status');
 
     $baseCondition = function($q) {
-        $q->where(function($q2) {
-            $q2->where('progres', Pelanggan::PROGRES_REGISTRASI)
-               ->orWhere('status', 'approve');
-        })->where('nomer_id', 'LIKE', '%JMK-GK%');
+        $q->where('status', 'approve');
     };
 
     // Status counts (unfiltered by user search, but filtered by base condition)
     $countTotal = Pelanggan::where($baseCondition)->count();
     $countApprove = Pelanggan::where($baseCondition)->where('status', 'approve')->count();
-    $countPending = Pelanggan::where($baseCondition)->whereIn('status', ['proses', 'pending'])->count();
+    $countPending = 0;
 
     // Query with filters
     $pelanggan = Pelanggan::with([
@@ -193,11 +190,10 @@ public function index(Request $request)
         ])
         // Filter by status if provided
         ->when($statusFilter, function($query) use ($statusFilter) {
-            if ($statusFilter === 'proses') {
-                return $query->whereIn('status', ['proses', 'pending']);
+            if ($statusFilter === 'approve') {
+                return $query->where('status', 'approve');
             }
-
-            return $query->where('status', $statusFilter);
+            return $query;
         })
         // Search filter
         ->when($search, function($query) use ($search) {
@@ -273,8 +269,12 @@ public function index(Request $request)
 
             // 3?? Ambil paket & tentukan tanggal langganan
             $paket = Paket::findOrFail($validated['paket_id']);
-            $tanggalMulai = $validated['tanggal_mulai'] ?? now();
-            $tanggalBerakhir = $validated['tanggal_berakhir'] ?? now()->addDays($paket->masa_pembayaran);
+            $tanggalMulai = isset($validated['tanggal_mulai'])
+                ? \Carbon\Carbon::parse($validated['tanggal_mulai'])
+                : now();
+            $tanggalBerakhir = isset($validated['tanggal_berakhir'])
+                ? \Carbon\Carbon::parse($validated['tanggal_berakhir'])
+                : $tanggalMulai->copy()->addDays((int) ($paket->masa_pembayaran ?? 30));
 
             // 4?? Buat Pelanggan dengan user_id dari user baru
             Pelanggan::create([
@@ -300,6 +300,8 @@ public function index(Request $request)
                 'deskripsi' => $validated['deskripsi'] ?? null,
                 'foto_ktp' => $fotoKtpPath,
                 'status' => 'approve',
+                'progres' => Pelanggan::PROGRES_REGISTRASI,
+                'progress_note' => null,
             ]);
 
             DB::commit();

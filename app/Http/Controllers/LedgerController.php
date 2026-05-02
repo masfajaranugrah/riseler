@@ -67,11 +67,10 @@ class LedgerController extends Controller
             $startDate = $today;
             $endDate = $today->copy()->endOfDay();
 
-            // Get pemasukan hari ini dari TAGIHAN LUNAS (pakai tanggal_mulai)
-            $incomesData = Tagihan::where('status_pembayaran', 'lunas')
-                ->whereDate('tanggal_mulai', $today)
-                ->join('pakets', 'tagihans.paket_id', '=', 'pakets.id')
-                ->selectRaw('DATE(tanggal_mulai) as tanggal, SUM(COALESCE(tagihans.harga, pakets.harga, 0)) as total_masuk')
+            // Get pemasukan hari ini dari Income bersih (sudah potong PPN)
+            $incomesData = Income::whereDate('tanggal_masuk', $today)
+                ->where('kategori', '!=', 'Potongan PPN')
+                ->selectRaw('DATE(tanggal_masuk) as tanggal, SUM(jumlah) as total_masuk')
                 ->groupBy('tanggal')
                 ->get()
                 ->keyBy('tanggal');
@@ -225,7 +224,7 @@ class LedgerController extends Controller
             'BEBAN GUNUNGKIDUL' => ['kode' => '205', 'jumlah' => 0, 'items' => []],
         ];
 
-        $kategori206 = []; // Tampung kategori 206 (DLL) — nama bebas dari admin
+        $kategori206 = []; // Tampung kategori 206 (DLL)  nama bebas dari admin
 
         foreach ($expenses as $expense) {
             $kategori = strtoupper(trim($expense->kategori ?? ''));
@@ -239,7 +238,7 @@ class LedgerController extends Controller
                     'jumlah'      => $expense->jumlah,
                 ];
             } elseif (!empty($kategori)) {
-                // Kategori 206 (DLL) — nama kategori input admin, belum ada di daftar
+                // Kategori 206 (DLL)  nama kategori input admin, belum ada di daftar
                 if (!isset($kategori206[$kategori])) {
                     $kategori206[$kategori] = ['kode' => '206', 'jumlah' => 0, 'items' => []];
                 }
@@ -263,7 +262,7 @@ class LedgerController extends Controller
             ];
         }
 
-        // Tambahkan sheet 206 (DLL) — satu sheet per nama kategori unik
+        // Tambahkan sheet 206 (DLL)  satu sheet per nama kategori unik
         foreach ($kategori206 as $nama => $data) {
             $pengeluaranGrouped[] = [
                 'kode'     => '206',
@@ -496,7 +495,7 @@ class LedgerController extends Controller
 
         $periodeLabel = Carbon::createFromDate($tahun, $bulan, 1)->locale('id')->isoFormat('MMMM YYYY');
 
-        return view('content.apps.Pembukuan.bbp.ringkasan', compact(
+        $dataRingkasan = compact(
             'bulan',
             'tahun',
             'periodeLabel',
@@ -509,7 +508,16 @@ class LedgerController extends Controller
             'omsetRealisasi',
             'piutang',
             'rugiLaba'
-        ));
+        );
+
+        if ($request->export === 'excel') {
+            return \Maatwebsite\Excel\Facades\Excel::download(
+                new \App\Exports\BbpRingkasanExport($dataRingkasan),
+                'Ringkasan_BBP_Rugi_Laba_' . $periodeLabel . '.xlsx'
+            );
+        }
+
+        return view('content.apps.Pembukuan.bbp.ringkasan', $dataRingkasan);
     }
     /**
      * Export Buku Pembantu to Excel
@@ -555,55 +563,17 @@ class LedgerController extends Controller
     {
         $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth();
         $endDate   = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth();
-        // Siklus billing dimulai dari tanggal 26:
-        // "Tagihan Februari" = tanggal_mulai 26 Jan s/d 25 Feb
-        // Jika filter Maret ? outstanding Feb = tanggal_mulai 26 Jan - 25 Feb
-        $twoMonthsAgo  = Carbon::createFromDate($tahun, $bulan, 1)->subMonths(2);
-        $prevMonth     = Carbon::createFromDate($tahun, $bulan, 1)->subMonth();
-        $prevStartDate = Carbon::createFromDate($twoMonthsAgo->year, $twoMonthsAgo->month, 26)->startOfDay();
-        $prevEndDate   = Carbon::createFromDate($prevMonth->year, $prevMonth->month, 25)->endOfDay();
 
-        // Batas tanggal: 1-25 = normal, 26-31 = outstanding terlambat
-        $cutoffDate   = Carbon::createFromDate($tahun, $bulan, 25)->endOfDay();
-        $after26Start = Carbon::createFromDate($tahun, $bulan, 26)->startOfDay();
-
-        // ---- QUERY 1: Tanggal 1-25 ----
-        // Tagihan FEBRUARI yang dibayar pada 1-25 Maret (pembayaran normal/awal bulan)
-        $incomesRegular = Tagihan::where('status_pembayaran', 'lunas')
-            ->whereBetween('tanggal_pembayaran', [$startDate, $cutoffDate])
-            ->whereBetween('tanggal_mulai', [$prevStartDate, $prevEndDate])
-            ->leftJoin('pakets', 'tagihans.paket_id', '=', 'pakets.id')
-            ->selectRaw('DATE(tagihans.tanggal_pembayaran) as tanggal, SUM(COALESCE(tagihans.harga, pakets.harga, 0)) as total_masuk')
+        // DEBIT (Pemasukan): ambil dari Income bersih (sudah potong PPN)
+        $incomesData = Income::whereBetween('tanggal_masuk', [$startDate, $endDate])
+            ->where('kategori', '!=', 'Potongan PPN')
+            ->selectRaw('DATE(tanggal_masuk) as tanggal, SUM(jumlah) as total_masuk')
             ->groupBy('tanggal')
             ->orderBy('tanggal', 'asc')
             ->get()
             ->keyBy('tanggal');
 
-        // ---- QUERY 2: Tanggal 26-31 ----
-        // Tagihan FEBRUARI yang dibayar pada 26-31 Maret (outstanding terlambat)
-        $incomesOutstanding = Tagihan::where('status_pembayaran', 'lunas')
-            ->whereBetween('tanggal_pembayaran', [$after26Start, $endDate])
-            ->whereBetween('tanggal_mulai', [$prevStartDate, $prevEndDate])
-            ->leftJoin('pakets', 'tagihans.paket_id', '=', 'pakets.id')
-            ->selectRaw('DATE(tagihans.tanggal_pembayaran) as tanggal, SUM(COALESCE(tagihans.harga, pakets.harga, 0)) as total_masuk')
-            ->groupBy('tanggal')
-            ->orderBy('tanggal', 'asc')
-            ->get()
-            ->keyBy('tanggal');
-
-        // Gabungkan: regular (1-25) + outstanding (26-31)
-        // Tanggal yang muncul = tanggal_pembayaran (kapan pelanggan bayar)
-        $incomesData = $incomesRegular;
-        foreach ($incomesOutstanding as $tanggal => $item) {
-            if ($incomesData->has($tanggal)) {
-                $incomesData[$tanggal]->total_masuk += $item->total_masuk;
-            } else {
-                $incomesData->put($tanggal, $item);
-            }
-        }
-        $incomesData = $incomesData->sortKeys();
-
-        // Get expenses per hari dalam bulan yang dipilih
+        // CREDIT (Pengeluaran)
         $expensesData = Expense::whereBetween('tanggal_keluar', [$startDate, $endDate])
             ->selectRaw('DATE(tanggal_keluar) as tanggal, SUM(jumlah) as total_keluar')
             ->groupBy('tanggal')

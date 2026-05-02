@@ -794,16 +794,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
 
                 </div>
-            </div>
 
-            <!-- Action Buttons -->
-            <div class="d-flex justify-content-end gap-2 mb-4">
-                <a href="{{ route('pelanggan') }}" class="btn btn-label-secondary btn-cancel">
-                    <i class="ri-close-line me-1"></i>Batal
-                </a>
-                <button type="submit" class="btn btn-primary btn-save">
-                    <i class="ri-save-line me-1"></i>Simpan Pelanggan
-                </button>
+                <div class="card-footer bg-white border-0 pt-0 pb-4 px-4">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ route('pelanggan') }}" class="btn btn-label-secondary btn-cancel">
+                            <i class="ri-close-line me-1"></i>Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-save">
+                            <i class="ri-save-line me-1"></i>Simpan Pelanggan
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

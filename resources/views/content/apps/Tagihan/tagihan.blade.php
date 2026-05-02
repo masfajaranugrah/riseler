@@ -1391,14 +1391,11 @@ document.addEventListener("DOMContentLoaded", function () {
                                 icon: 'success',
                                 title: 'Tagihan Lunas!',
                                 html: `
-                                    <p>Pembayaran <strong>${nama}</strong> berhasil dikonfirmasi.</p>
-                                    ${resp.pdfUrl ? `<a href="${resp.pdfUrl}" target="_blank" class="btn btn-sm mt-2" style="background:#18181b;color:#fff;"><i class="ri-file-pdf-line me-1"></i>Cetak Kwitansi</a>` : ''}
+                                <p>Pembayaran <strong>${nama}</strong> berhasil dikonfirmasi.</p>
                                 `,
-                                showConfirmButton: true,
+                                showConfirmButton: false,
                                 showDenyButton: false,
                                 showCancelButton: false,
-                                confirmButtonText: 'Tutup',
-                                confirmButtonColor: '#18181b',
                                 timer: 4000,
                                 timerProgressBar: true,
                                 allowOutsideClick: false
@@ -1736,63 +1733,7 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 <div class="container-fluid px-4 py-4">
-  <!-- ========================================= -->
-  <!-- FILTER & SEARCH -->
-  <!-- ========================================= -->
-
-  <div class="card mb-4">
-    <div class="card-body">
-      <form method="GET" action="{{ route('tagihan.get') }}" id="filterForm">
-        <div class="row g-3 align-items-end">
-          <div class="col-md-6">
-            <label class="form-label small fw-semibold mb-2">
-              <i class="ri-search-line me-1"></i>Pencarian
-            </label>
-            <input
-              type="text"
-              name="search"
-              class="form-control"
-              placeholder="Cari nama, No. ID, WhatsApp..."
-              value="{{ request('search') }}">
-          </div>
-
-          <div class="col-md-3">
-             <label class="form-label small fw-semibold mb-2" style="color: #4b5563;">
-              <i class="ri-calendar-line me-1"></i>Periode Laporan
-            </label>
-             <input type="hidden" name="periode" id="periodeInput" value="{{ request('periode') }}">
-             
-             <div id="periodeTrigger" class="d-flex align-items-center gap-2 px-3 py-2 bg-white border rounded-pill shadow-sm cursor-pointer position-relative w-100" style="transition: all 0.2s; height: 38px;">
-                <i class="ri-calendar-event-line text-muted"></i>
-                <span class="fw-semibold small text-dark flex-grow-1" style="font-size: 0.85rem;">
-                  {{ request('periode') ? \Carbon\Carbon::createFromFormat('Y-m', request('periode'))->translatedFormat('F Y') : 'Pilih Periode' }}
-                </span>
-                <i class="ri-arrow-down-s-line text-muted" style="font-size: 1rem;"></i>
-
-                @if(request('periode'))
-                  <div onclick="resetFilterTagihan(event)" class="d-flex align-items-center justify-content-center bg-danger-subtle rounded-circle text-danger ms-2" style="width: 20px; height: 20px; transition: 0.2s;" title="Hapus Filter">
-                    <i class="ri-close-line" style="font-size: 14px;"></i>
-                  </div>
-                @endif
-             </div>
-          </div>
-
-          <div class="col-md-3">
-            <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-search-dark flex-grow-1">
-                <i class="ri-search-line me-1"></i>Cari
-              </button>
-              @if(request()->hasAny(['search', 'periode']))
-                <a href="{{ route('tagihan.get') }}" class="btn btn-secondary">
-                  <i class="ri-refresh-line me-1"></i>Reset
-                </a>
-              @endif
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
+  <!-- FILTER & SEARCH REMOVED -->
 
   <!-- ========================================= -->
   <!-- DAFTAR TAGIHAN -->

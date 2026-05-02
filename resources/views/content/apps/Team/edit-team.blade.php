@@ -441,16 +441,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             <select id="role" name="role" required class="form-select" style="border: none;">
                                 <option value="">-- Pilih Role --</option>
                                 <option value="administrator" {{ old('role', $user->role) == 'administrator' ? 'selected' : '' }}>Administrator</option>
-                                <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="marketing" {{ old('role', $user->role) == 'marketing' ? 'selected' : '' }}>Marketing</option>
-                                <option value="directur" {{ old('role', $user->role) == 'directur' ? 'selected' : '' }}>Directur</option>
-                                <option value="koordinator" {{ old('role', $user->role) == 'koordinator' ? 'selected' : '' }}>Koordinator</option>
-                                <option value="customer_service" {{ old('role', $user->role) == 'customer_service' ? 'selected' : '' }}>Customer Service</option>
-                                <option value="team" {{ old('role', $user->role) == 'team' ? 'selected' : '' }}>Team</option>
-                                <option value="teknisi" {{ old('role', $user->role) == 'teknisi' ? 'selected' : '' }}>Teknisi</option>
-                                <option value="karyawan" {{ old('role', $user->role) == 'karyawan' ? 'selected' : '' }}>Karyawan</option>
-                                <option value="logistic" {{ old('role', $user->role) == 'logistic' ? 'selected' : '' }}>Logistic</option>
-                                <option value="verifikasi" {{ old('role', $user->role) == 'verifikasi' ? 'selected' : '' }}>Verifikasi Tagihan</option>
                             </select>
                         </div>
                     </div>

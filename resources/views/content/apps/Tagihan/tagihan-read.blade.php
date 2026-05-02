@@ -304,7 +304,7 @@
     <div class="stats-card">
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <p class="mb-1 text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Total Pelanggan JMK-GK</p>
+          <p class="mb-1 text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Total Pelanggan</p>
           <h2 class="mb-0 fw-bold" id="statTotal" style="font-size: 2rem;">0</h2>
         </div>
         <div class="stats-icon">

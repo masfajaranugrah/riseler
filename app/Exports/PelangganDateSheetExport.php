@@ -54,9 +54,9 @@ class PelangganDateSheetExport implements FromCollection, WithHeadings, WithTitl
 
             $data->push([
                 'no' => $no++,
-                'nomer_id' => $pelanggan->nomer_id ?? '-',
+                'nomer_id' => !empty($pelanggan->nomer_id) ? "'" . $pelanggan->nomer_id : '-',
                 'nama_lengkap' => $pelanggan->nama_lengkap ?? '-',
-                'no_whatsapp' => $pelanggan->no_whatsapp ?? '-',
+                'no_whatsapp' => !empty($pelanggan->no_whatsapp) ? "'" . $pelanggan->no_whatsapp : '-',
                 'alamat' => $alamat,
                 'kecepatan' => $pelanggan->paket->kecepatan ?? '-',
                 'harga' => (float) ($pelanggan->paket->harga ?? 0),
@@ -110,7 +110,6 @@ class PelangganDateSheetExport implements FromCollection, WithHeadings, WithTitl
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $lastRow = $sheet->getHighestRow();
                 $lastColumn = $sheet->getHighestColumn();
                 $jumlahHariIni = $this->items->count();
                 $dateFormatted = Carbon::parse($this->date)->locale('id')->translatedFormat('d F Y');
@@ -134,8 +133,11 @@ class PelangganDateSheetExport implements FromCollection, WithHeadings, WithTitl
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
 
+                // Hitung ulang row akhir data setelah insert header
+                $dataLastRow = 5 + $jumlahHariIni;
+
                 // Border for data area (row 5 = heading, row 6+ = data)
-                $sheet->getStyle('A5:' . $lastColumn . $lastRow)->applyFromArray([
+                $sheet->getStyle('A5:' . $lastColumn . $dataLastRow)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -144,12 +146,12 @@ class PelangganDateSheetExport implements FromCollection, WithHeadings, WithTitl
                 ]);
 
                 // Format harga column (G) as number
-                $sheet->getStyle('G6:G' . $lastRow)
+                $sheet->getStyle('G6:G' . $dataLastRow)
                     ->getNumberFormat()
                     ->setFormatCode('#,##0');
 
                 // === SUMMARY SECTION ===
-                $summaryStart = $lastRow + 2;
+                $summaryStart = $dataLastRow + 2;
 
                 // Summary title
                 $sheet->mergeCells("E{$summaryStart}:G{$summaryStart}");

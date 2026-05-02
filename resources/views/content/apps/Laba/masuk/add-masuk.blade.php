@@ -178,17 +178,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const dllInput = document.getElementById('kategori_dll');
     const jumlahInput = document.getElementById('jumlah');
 
-    // Tampilkan input kategori DLL jika dipilih
-    kategoriSelect.addEventListener('change', () => {
-        if(kategoriSelect.value === 'DLL') {
+    const toggleKategoriDll = () => {
+        if (kategoriSelect.value === 'DLL') {
             dllInputWrapper.style.display = 'block';
             dllInputWrapper.classList.add('kategori-dll-wrapper');
             dllInput.required = true;
         } else {
             dllInputWrapper.style.display = 'none';
+            dllInput.value = '';
             dllInput.required = false;
         }
-    });
+    };
+
+    // Tampilkan input kategori DLL jika dipilih
+    kategoriSelect.addEventListener('change', toggleKategoriDll);
+    $('#kategori').on('change.select2', toggleKategoriDll);
+    toggleKategoriDll();
 
     // Inisialisasi Flatpickr untuk tanggal & jam masuk
     flatpickr("#tanggal_masuk", {
@@ -276,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
 
                     <!-- Kategori DLL (Conditional) -->
-                    <div class="mb-4" id="kategori_dll_wrapper" style="display:none;">
+                    <div class="mb-4" id="kategori_dll_wrapper" style="display:{{ old('kategori') == 'DLL' ? 'block' : 'none' }};">
                         <label for="kategori_dll" class="form-label">
                             <i class="ri-edit-line"></i>Nama Kategori Lainnya
                         </label>
@@ -363,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
 
                     <!-- Keterangan -->
-                    <div class="mb-0">
+                    <div class="mb-4">
                         <label for="keterangan" class="form-label">
                             <i class="ri-file-text-line"></i>Keterangan (Opsional)
                         </label>
@@ -381,17 +386,17 @@ document.addEventListener('DOMContentLoaded', function () {
                         @enderror
                     </div>
 
-                </div>
-            </div>
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top mt-2">
+                        <a href="{{ route('income.index') }}" class="btn btn-label-secondary btn-cancel">
+                            <i class="ri-close-line me-1"></i>Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-save">
+                            <i class="ri-save-line me-1"></i>Simpan Pemasukan
+                        </button>
+                    </div>
 
-            <!-- Action Buttons -->
-            <div class="d-flex justify-content-end gap-2 mb-4">
-                <a href="{{ route('income.index') }}" class="btn btn-label-secondary btn-cancel">
-                    <i class="ri-close-line me-1"></i>Batal
-                </a>
-                <button type="submit" class="btn btn-primary btn-save">
-                    <i class="ri-save-line me-1"></i>Simpan Pemasukan
-                </button>
+                </div>
             </div>
 
         </form>

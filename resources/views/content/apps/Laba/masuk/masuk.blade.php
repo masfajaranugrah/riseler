@@ -854,8 +854,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 </form>
                 
                 <div class="d-flex gap-2">
-                    <a href="{{ route('income.export', request()->only(['filter_month', 'filter_year', 'search'])) }}" class="btn btn-outline-secondary" title="Export Harian (Pisah Sheet)">
-                        <i class="ri-file-excel-line me-1"></i>Export (Pisah Sheet)
+                    <a href="{{ route('income.export', request()->only(['filter_month', 'filter_year', 'search'])) }}" class="btn btn-outline-secondary" title="Export Excel">
+                        <i class="ri-file-excel-line me-1"></i>Export
                     </a>
                 </div>
                 <a href="{{ route('income.create') }}" class="btn btn-primary btn-add">
@@ -973,11 +973,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     <thead>
                         <tr>
                             <th><i class="ri-hashtag me-1"></i>No</th>
-                            <th><i class="ri-user-line me-1"></i>Pelanggan</th>
-                            <th><i class="ri-router-line me-1"></i>Paket</th>
+                            <th><i class="ri-barcode-line me-1"></i>Kode</th>
+                            <th><i class="ri-folder-line me-1"></i>Kategori</th>
+                            <th><i class="ri-file-text-line me-1"></i>Keterangan</th>
                             <th><i class="ri-bank-card-line me-1"></i>Tipe Pembayaran</th>
                             <th><i class="ri-money-dollar-box-line me-1"></i>Jumlah</th>
-                            <th><i class="ri-calendar-check-line me-1"></i>Tanggal Bayar</th>
+                            <th><i class="ri-calendar-check-line me-1"></i>Tanggal Masuk</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -986,24 +987,25 @@ document.addEventListener("DOMContentLoaded", function() {
                             <td class="text-muted fw-semibold">{{ ($incomes->firstItem() ?? 1) + $loop->index }}</td>
 
                             <td>
-                                <div class="d-flex flex-column">
-                                    <strong style="font-size:0.9rem;">{{ $i->nama_pelanggan ?? '-' }}</strong>
-                                    <small class="text-muted">{{ $i->nomer_id ?? '-' }}</small>
-                                </div>
+                                <span class="badge bg-label-dark">{{ $i->kode ?? '-' }}</span>
                             </td>
 
                             <td>
-                                <span class="badge bg-label-dark">{{ $i->nama_paket ?? '-' }}</span>
+                                <strong style="font-size:0.9rem;">{{ $i->kategori ?? '-' }}</strong>
                             </td>
 
                             <td>
-                                @if(strtolower($i->tipe_pembayaran ?? '') === 'cash / tunai' || empty($i->tipe_pembayaran))
+                                <span class="text-muted">{{ $i->keterangan ?: '-' }}</span>
+                            </td>
+
+                            <td>
+                                @if(strtolower($i->tipe_pembayaran ?? '') === 'cash' || empty($i->tipe_pembayaran))
                                     <span class="badge" style="background:#f4f4f5;color:#18181b;border:1px solid #e4e4e7;">
                                         <i class="ri-money-dollar-circle-line me-1"></i>Cash / Tunai
                                     </span>
                                 @else
                                     <span class="badge" style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;">
-                                        <i class="ri-bank-line me-1"></i>{{ $i->tipe_pembayaran }}
+                                        <i class="ri-bank-line me-1"></i>Transfer
                                     </span>
                                 @endif
                             </td>
@@ -1012,7 +1014,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <strong style="color: #18181b;">Rp {{ number_format($i->jumlah, 0, ',', '.') }}</strong>
                             </td>
 
-                            <td>{{ \Carbon\Carbon::parse($i->tanggal_pembayaran)->format('d M Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($i->tanggal_masuk)->format('d M Y H:i') }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -1032,17 +1034,15 @@ document.addEventListener("DOMContentLoaded", function() {
             @endif
         </div>
 
-    @if($incomes->hasPages())
-      <div class="pagination-wrapper">
-        <div class="pagination-info">
-          Menampilkan <strong>{{ $incomes->firstItem() ?? 0 }}</strong> - <strong>{{ $incomes->lastItem() ?? 0 }}</strong>
-          dari <strong>{{ $incomes->total() }}</strong> data
-        </div>
-        <div>
-          {{ $incomes->appends(request()->query())->onEachSide(1)->links('pagination::bootstrap-5') }}
-        </div>
+    <div class="pagination-wrapper">
+      <div class="pagination-info">
+        Menampilkan <strong>{{ $incomes->firstItem() ?? 0 }}</strong> - <strong>{{ $incomes->lastItem() ?? 0 }}</strong>
+        dari <strong>{{ $incomes->total() }}</strong> data
       </div>
-    @endif
+      <div>
+        {{ $incomes->appends(request()->query())->onEachSide(1)->links('pagination::custom-always') }}
+      </div>
+    </div>
     </div>
 </div>
 

@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\Income;
 use App\Models\LedgerDaily;
-use App\Models\Rekening;
 use App\Exports\IncomeExport;
-use App\Models\Tagihan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class IncomeController extends Controller
@@ -61,66 +58,52 @@ class IncomeController extends Controller
         $filterMonth = request('filter_month', $today->month);
         $filterYear  = request('filter_year', $today->year);
 
-        // ── QUERY UTAMA: Tagihan Lunas (sumber pemasukan) ──────────────────
-        $query = Tagihan::where('tagihans.status_pembayaran', 'lunas')
-            ->whereMonth('tagihans.tanggal_pembayaran', $filterMonth)
-            ->whereYear('tagihans.tanggal_pembayaran', $filterYear)
-            ->leftJoin('pelanggans', 'pelanggans.id', '=', 'tagihans.pelanggan_id')
-            ->leftJoin('pakets', 'pakets.id', '=', 'tagihans.paket_id')
-            ->leftJoin('rekenings', 'rekenings.id', '=', 'tagihans.type_pembayaran')
-            ->select([
-                'tagihans.id',
-                'tagihans.tanggal_pembayaran',
-                'tagihans.harga',
-                'tagihans.catatan',
-                'tagihans.nama_paket',
-                'pelanggans.nama_lengkap as nama_pelanggan',
-                'pelanggans.nomer_id as nomer_id',
-                DB::raw('COALESCE(rekenings.nama_bank, "Cash / Tunai") as tipe_pembayaran'),
-                DB::raw('COALESCE(tagihans.harga, pakets.harga, 0) as jumlah'),
-            ])
-            ->orderByDesc('tagihans.tanggal_pembayaran');
+        // ── QUERY UTAMA: Data Income (exclude Potongan PPN karena ada menu khusus) ──
+        $query = Income::query()
+            ->where('kategori', '!=', 'Potongan PPN')
+            ->whereMonth('tanggal_masuk', $filterMonth)
+            ->whereYear('tanggal_masuk', $filterYear)
+            ->orderByDesc('tanggal_masuk');
 
         // Search filter
         if (request('search')) {
             $search = request('search');
             $query->where(function ($q) use ($search) {
-                $q->where('pelanggans.nama_lengkap', 'like', '%' . $search . '%')
-                  ->orWhere('pelanggans.nomer_id', 'like', '%' . $search . '%')
-                  ->orWhere('tagihans.nama_paket', 'like', '%' . $search . '%')
-                  ->orWhere('rekenings.nama_bank', 'like', '%' . $search . '%');
+                $q->where('kode', 'like', '%' . $search . '%')
+                  ->orWhere('kategori', 'like', '%' . $search . '%')
+                  ->orWhere('keterangan', 'like', '%' . $search . '%')
+                  ->orWhere('tipe_pembayaran', 'like', '%' . $search . '%');
             });
         }
 
-        $incomes = $query->paginate(20)->withQueryString();
+        $incomes = $query->paginate(40)->withQueryString();
 
         // ── REKAP PER BANK ───────────────────────────────────────────────────
-        $bankTotals = Tagihan::where('tagihans.status_pembayaran', 'lunas')
-            ->whereMonth('tagihans.tanggal_pembayaran', $filterMonth)
-            ->whereYear('tagihans.tanggal_pembayaran', $filterYear)
-            ->leftJoin('rekenings', 'rekenings.id', '=', 'tagihans.type_pembayaran')
-            ->leftJoin('pakets', 'pakets.id', '=', 'tagihans.paket_id')
-            ->selectRaw('COALESCE(rekenings.nama_bank, "Cash / Tunai") as nama_bank, SUM(COALESCE(tagihans.harga, pakets.harga, 0)) as total')
-            ->groupByRaw('COALESCE(rekenings.nama_bank, "Cash / Tunai")')
+        $bankTotals = Income::query()
+            ->where('kategori', '!=', 'Potongan PPN')
+            ->whereMonth('tanggal_masuk', $filterMonth)
+            ->whereYear('tanggal_masuk', $filterYear)
+            ->selectRaw('COALESCE(tipe_pembayaran, "cash") as nama_bank, SUM(jumlah) as total')
+            ->groupByRaw('COALESCE(tipe_pembayaran, "cash")')
             ->orderByDesc('total')
             ->get();
 
         // ── TOTAL HARIAN ─────────────────────────────────────────────────────
-        $dailyTotals = Tagihan::where('status_pembayaran', 'lunas')
-            ->whereMonth('tanggal_pembayaran', $filterMonth)
-            ->whereYear('tanggal_pembayaran', $filterYear)
-            ->leftJoin('pakets', 'pakets.id', '=', 'tagihans.paket_id')
-            ->selectRaw('DATE(tagihans.tanggal_pembayaran) as date, SUM(COALESCE(tagihans.harga, pakets.harga, 0)) as total')
+        $dailyTotals = Income::query()
+            ->where('kategori', '!=', 'Potongan PPN')
+            ->whereMonth('tanggal_masuk', $filterMonth)
+            ->whereYear('tanggal_masuk', $filterYear)
+            ->selectRaw('DATE(tanggal_masuk) as date, SUM(jumlah) as total')
             ->groupBy('date')
             ->orderBy('date', 'desc')
             ->get();
 
         // ── TOTAL BULANAN ─────────────────────────────────────────────────────
-        $monthlyTotal = Tagihan::where('status_pembayaran', 'lunas')
-            ->whereMonth('tanggal_pembayaran', $filterMonth)
-            ->whereYear('tanggal_pembayaran', $filterYear)
-            ->leftJoin('pakets', 'pakets.id', '=', 'tagihans.paket_id')
-            ->selectRaw('SUM(COALESCE(tagihans.harga, pakets.harga, 0)) as total')
+        $monthlyTotal = Income::query()
+            ->where('kategori', '!=', 'Potongan PPN')
+            ->whereMonth('tanggal_masuk', $filterMonth)
+            ->whereYear('tanggal_masuk', $filterYear)
+            ->selectRaw('SUM(jumlah) as total')
             ->value('total') ?? 0;
 
         $monthLabel = Carbon::createFromDate($filterYear, $filterMonth, 1)->locale('id')->isoFormat('MMMM YYYY');
@@ -182,8 +165,9 @@ class IncomeController extends Controller
             'kategori' => 'required|string',
             'jumlah' => 'required|numeric',
             'keterangan' => 'nullable|string',
-            'kategori_dll' => 'nullable|string', // untuk DLL input manual
+            'kategori_dll' => 'required_if:kategori,DLL|nullable|string', // untuk DLL input manual
             'tanggal_masuk' => 'nullable|date',   // bisa diisi tanggal bebas
+            'tipe_pembayaran' => 'required|string|in:cash,transfer',
         ]);
 
         // Tentukan kategori final
@@ -205,6 +189,7 @@ class IncomeController extends Controller
             'jumlah' => $request->jumlah,
             'keterangan' => $request->keterangan,
             'kode' => $kode,
+            'tipe_pembayaran' => $request->tipe_pembayaran,
             'tanggal_masuk' => $tanggalMasuk,
             'created_at' => $tanggalMasuk,
             'updated_at' => $tanggalMasuk,
@@ -260,8 +245,9 @@ class IncomeController extends Controller
         'kategori' => 'required|string',
         'jumlah' => 'required|numeric',
         'keterangan' => 'nullable|string',
-        'kategori_dll' => 'nullable|string',
+        'kategori_dll' => 'required_if:kategori,DLL|nullable|string',
         'tanggal_masuk' => 'nullable|date',
+        'tipe_pembayaran' => 'required|string|in:cash,transfer',
     ]);
 
     $income = Income::findOrFail($id);
@@ -282,6 +268,7 @@ class IncomeController extends Controller
         'kategori' => $kategori,
         'jumlah' => $request->jumlah,
         'keterangan' => $request->keterangan,
+        'tipe_pembayaran' => $request->tipe_pembayaran,
         'tanggal_masuk' => $tanggalMasukBaru,
     ]);
 

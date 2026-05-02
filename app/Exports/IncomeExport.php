@@ -2,9 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\Tagihan;
+use App\Models\Income;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
@@ -35,7 +34,7 @@ class IncomeExport implements WithMultipleSheets
         $sheets[] = new IncomeSummarySheetExport($items, $this->month, $this->year);
 
         $groupedByDate = $items->groupBy(function ($item) {
-            return Carbon::parse($item->tanggal_pembayaran)->format('Y-m-d');
+            return Carbon::parse($item->tanggal_masuk)->format('Y-m-d');
         });
 
         foreach ($groupedByDate as $date => $rows) {
@@ -52,47 +51,30 @@ class IncomeExport implements WithMultipleSheets
 
     protected function queryItems(): Collection
     {
-        return Tagihan::where('tagihans.status_pembayaran', 'lunas')
+        return Income::query()
             ->when($this->month, function ($query) {
-                $query->whereMonth('tagihans.tanggal_pembayaran', $this->month);
+                $query->whereMonth('tanggal_masuk', $this->month);
             })
             ->when($this->year, function ($query) {
-                $query->whereYear('tagihans.tanggal_pembayaran', $this->year);
+                $query->whereYear('tanggal_masuk', $this->year);
             })
             ->when($this->search, function ($query) {
                 $search = $this->search;
                 $query->where(function ($q) use ($search) {
-                    $q->where('pelanggans.nama_lengkap', 'like', '%' . $search . '%')
-                      ->orWhere('pelanggans.nomer_id', 'like', '%' . $search . '%')
-                      ->orWhere('pelanggans.no_whatsapp', 'like', '%' . $search . '%')
-                      ->orWhere('tagihans.nama_paket', 'like', '%' . $search . '%')
-                      ->orWhere('rekenings.nama_bank', 'like', '%' . $search . '%');
+                    $q->where('kode', 'like', '%' . $search . '%')
+                      ->orWhere('kategori', 'like', '%' . $search . '%')
+                      ->orWhere('keterangan', 'like', '%' . $search . '%');
                 });
             })
-            ->when($this->is_dedicated, function ($query) {
-                $query->where(function($q) {
-                    $q->where('tagihans.nama_paket', 'like', '%Dedicated%')
-                      ->orWhere('pakets.nama_paket', 'like', '%Dedicated%');
-                });
-            })
-            ->leftJoin('pelanggans', 'pelanggans.id', '=', 'tagihans.pelanggan_id')
-            ->leftJoin('pakets', 'pakets.id', '=', 'tagihans.paket_id')
-            ->leftJoin('rekenings', 'rekenings.id', '=', 'tagihans.type_pembayaran')
             ->select([
-                'pelanggans.nomer_id as no_pelanggan',
-                'pelanggans.nama_lengkap as nama_pelanggan',
-                'pelanggans.no_whatsapp as no_whatsapp',
-                DB::raw('COALESCE(tagihans.harga, pakets.harga, 0) as jumlah'),
-                'tagihans.kecepatan',
-                'tagihans.tanggal_mulai',
-                'tagihans.tanggal_berakhir as jatuh_tempo',
-                'tagihans.status_pembayaran',
-                'tagihans.tanggal_mulai',
-                DB::raw('COALESCE(rekenings.nama_bank, "Cash / Tunai") as type_pembayaran'),
-                'tagihans.tanggal_pembayaran',
-                'tagihans.catatan',
+                'kode',
+                'kategori',
+                'jumlah',
+                'tipe_pembayaran as type_pembayaran',
+                'tanggal_masuk',
+                'keterangan as catatan',
             ])
-            ->orderBy('tagihans.tanggal_pembayaran', 'asc')
+            ->orderBy('tanggal_masuk', 'asc')
             ->get();
     }
 }

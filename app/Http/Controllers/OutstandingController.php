@@ -26,12 +26,11 @@ public function index(Request $request)
     $pelanggan = collect(); // Empty collection, data diload via AJAX
     $paket = Paket::all();
 
-    // ? BUILD QUERY - JOIN OPTIMIZATION + FILTER JMK-GK + BELUM BAYAR SAJA
+    // ? BUILD QUERY - JOIN OPTIMIZATION + BELUM BAYAR SAJA
     $query = Tagihan::with(['pelanggan', 'paket'])
         ->select('tagihans.*')
         ->join('pelanggans', 'tagihans.pelanggan_id', '=', 'pelanggans.id')
-        ->where('tagihans.status_pembayaran', 'belum bayar') // PASTIKAN HANYA BELUM BAYAR
-        ->where('pelanggans.nomer_id', 'LIKE', '%JMK-GK%'); // PASTIKAN HANYA JMK-GK
+        ->where('tagihans.status_pembayaran', 'belum bayar'); // PASTIKAN HANYA BELUM BAYAR
 
     // ? FILTER OUTSTANDING: Hanya tagihan bulan sebelumnya (bukan bulan ini)
     $query->where(function($q) {
@@ -99,16 +98,13 @@ public function index(Request $request)
             ];
         });
 
-    // Statistik - update untuk outstanding saja (khusus JMK-GK)
-    $totalCustomer = Pelanggan::where('status', 'approve')
-        ->where('nomer_id', 'LIKE', '%JMK-GK%')
-        ->count();
+    // Statistik - update untuk outstanding saja (semua pelanggan)
+    $totalCustomer = Pelanggan::where('status', 'approve')->count();
 
     $lunas = 0; // Sesuai permintaan: lunas jangan ditampilkan, jadi dinolkan saja untuk performa
 
     $belumLunas = Tagihan::join('pelanggans', 'tagihans.pelanggan_id', '=', 'pelanggans.id')
         ->where('tagihans.status_pembayaran', 'belum bayar')
-        ->where('pelanggans.nomer_id', 'LIKE', '%JMK-GK%')
         ->where(function($q) {
             $q->whereYear('tagihans.tanggal_berakhir', '<', now()->year)
               ->orWhere(function($subQ) {

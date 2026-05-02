@@ -439,16 +439,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             <select id="role" name="role" required class="form-select" style="border: none;">
                                 <option value="">-- Pilih Role --</option>
                                 <option value="administrator" {{ old('role') == 'administrator' ? 'selected' : '' }}>Administrator</option>
-                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="marketing" {{ old('role') == 'marketing' ? 'selected' : '' }}>Marketing</option>
-                                <option value="directur" {{ old('role') == 'directur' ? 'selected' : '' }}>Directur</option>
-                                <option value="koordinator" {{ old('role') == 'koordinator' ? 'selected' : '' }}>Koordinator</option>
-                                <option value="customer_service" {{ old('role') == 'customer_service' ? 'selected' : '' }}>Customer Service</option>
-                                <option value="team" {{ old('role') == 'team' ? 'selected' : '' }}>Team</option>
-                                <option value="teknisi" {{ old('role') == 'teknisi' ? 'selected' : '' }}>Teknisi</option>
-                                <option value="karyawan" {{ old('role') == 'karyawan' ? 'selected' : '' }}>Karyawan</option>
-                                <option value="logistic" {{ old('role') == 'logistic' ? 'selected' : '' }}>Logistic</option>
-                                <option value="verifikasi" {{ old('role') == 'verifikasi' ? 'selected' : '' }}>Verifikasi Tagihan</option>
                             </select>
                         </div>
                     </div>

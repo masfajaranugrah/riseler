@@ -863,7 +863,8 @@ body {
 /* ========== STAT CARDS ========== */
 .stat-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(280px, 520px));
+  justify-content: center;
   gap: 1rem;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--gray-border);
@@ -952,7 +953,7 @@ body {
 
 @media (max-width: 768px) {
   .stat-cards {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
     padding: 0.75rem 1rem;
   }
@@ -972,6 +973,12 @@ body {
   }
   .stat-label {
     font-size: 0.625rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .stat-cards {
+    grid-template-columns: 1fr;
   }
 }
 </style>
@@ -1251,8 +1258,26 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         `;
 
-        $('#detailModal .modal-body').html(html);
-        $('#detailModal').modal('show');
+        const modalEl = document.getElementById('detailModal');
+        const modalBody = modalEl ? modalEl.querySelector('.modal-body') : null;
+        if (!modalEl || !modalBody) {
+            console.error('detailModal element tidak ditemukan');
+            return;
+        }
+
+        modalBody.innerHTML = html;
+
+        if (window.bootstrap && window.bootstrap.Modal) {
+            window.bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        } else if (typeof $('#detailModal').modal === 'function') {
+            $('#detailModal').modal('show');
+        } else {
+            modalEl.classList.add('show');
+            modalEl.style.display = 'block';
+            modalEl.removeAttribute('aria-hidden');
+            modalEl.setAttribute('aria-modal', 'true');
+            modalEl.setAttribute('role', 'dialog');
+        }
     });
 
     // EVENT DELETE
@@ -1353,21 +1378,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="stat-value">{{ $countApprove }}</div>
             </div>
         </a>
-        <a href="{{ route('pelanggan', ['status' => 'proses']) }}" class="stat-card {{ $statusFilter === 'proses' ? 'active' : '' }}">
-            <div class="stat-icon pending">
-                <i class="ri-time-line"></i>
-            </div>
-            <div>
-                <div class="stat-label">Progress</div>
-                <div class="stat-value">{{ $countPending }}</div>
-            </div>
-        </a>
     </div>
 
     {{-- SEARCH SECTION --}}
     <div class="search-section">
         <form action="{{ route('pelanggan') }}" method="GET" id="searchForm">
-            @if($statusFilter)
+            @if($statusFilter === 'approve')
             <input type="hidden" name="status" value="{{ $statusFilter }}">
             @endif
             <div class="search-input-group">
@@ -1451,7 +1467,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         >
                             <td class="text-muted fw-semibold">{{ ($pelanggan->firstItem() ?? 1) + $loop->index }}</td>
                             <td>
-                                <button class="btn btn-sm btn-icon btn-outline-primary btn-detail" title="Lihat Detail">
+                                <button type="button" class="btn btn-sm btn-icon btn-outline-primary btn-detail" title="Lihat Detail">
                                     <i class="ri-eye-line"></i>
                                 </button>
                             </td>

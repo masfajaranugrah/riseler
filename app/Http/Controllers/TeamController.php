@@ -41,7 +41,7 @@ public function register(Request $request)
         'employee_id' => 'required|exists:employees,id',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|in:administrator,admin,logistic,marketing,customer_service,team,teknisi,koordinator,customer,karyawan,directur,verifikasi',
+        'role' => 'required|in:administrator',
     ]);
 
     // Ambil data karyawan
@@ -82,7 +82,7 @@ public function update(Request $request, string $id)
         'employee_id' => 'required|exists:employees,id',
         'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         'password' => 'nullable|string|min:8|confirmed',
-        'role' => 'required|in:administrator,logistic,admin,marketing,customer_service,team,teknisi,koordinator,customer,karyawan,directur,verifikasi',
+        'role' => 'required|in:administrator',
     ]);
 
     $employee = Employee::findOrFail($request->employee_id);

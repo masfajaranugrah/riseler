@@ -30,16 +30,6 @@
           "icon": "ri-file-list-3-line"
         },
         {
-          "url": "/dashboard/admin/tagihan/proses",
-          "name": "Verifikasi Tagihan",
-          "slug": "app-user-list",
-          "roles": [
-            "administrator",
-            "admin"
-          ],
-          "icon": "ri-checkbox-circle-line"
-        },
-        {
           "url": "/dashboard/admin/tagihan/lunas",
           "name": "List Pembayaran Lunas",
           "slug": "app-user-list",
@@ -330,6 +320,21 @@
           "slug": "app-user-list",
           "roles": "administrator",
           "icon": "ri-line-chart-line"
+        }
+      ]
+    },
+    {
+      "name": "Rekening",
+      "icon": "menu-icon tf-icons ri-bank-card-line",
+      "slug": "app-user",
+      "roles": "administrator",
+      "submenu": [
+        {
+          "url": "/dashboard/admin/rekenings",
+          "name": "Rekening",
+          "slug": "app-user-list",
+          "roles": "administrator",
+          "icon": "ri-bank-card-line"
         }
       ]
     },

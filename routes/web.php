@@ -65,7 +65,7 @@ Route::middleware('web')->group(function () {
 
 // Main Page Route
 Route::get('/', function () {
-    return redirect()->route('users.member');
+    return redirect()->route('login');
 });
 // Maintenance Route
 // Route::get('/maintenance', function () {

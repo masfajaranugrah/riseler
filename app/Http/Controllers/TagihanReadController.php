@@ -29,10 +29,9 @@ class TagihanReadController extends Controller
             $perPage = 40; // Batasi 40 per halaman
             $hasReadAtColumn = Schema::hasColumn('tagihans', 'read_at');
 
-            // Base query OPTIMIZED: Pelanggan JMK-GK yang punya tagihan di tahun terkait menggunakan JOIN (jauh lebih cepat)
+            // Base query OPTIMIZED: pelanggan yang punya tagihan di tahun terkait menggunakan JOIN (jauh lebih cepat)
             $query = Pelanggan::select('pelanggans.*')
                 ->join('tagihans', 'pelanggans.id', '=', 'tagihans.pelanggan_id')
-                ->where('pelanggans.nomer_id', 'LIKE', '%JMK-GK%')
                 ->whereYear('tagihans.tanggal_mulai', $year)
                 ->distinct();
 
@@ -87,14 +86,13 @@ class TagihanReadController extends Controller
                 ];
             });
 
-            // Statistik khusus total SEMUA pelanggan JMK-GK (Sesuai permintaan)
-            $totalPelanggan = Pelanggan::where('nomer_id', 'LIKE', '%JMK-GK%')->count();
+            // Statistik khusus total semua pelanggan
+            $totalPelanggan = Pelanggan::count();
 
             $sudahBaca = 0;
             if ($hasReadAtColumn) {
                 // Optimalisasi join untuk hitung pelanggan yang sudah baca (distinct id)
                 $sudahBaca = Pelanggan::join('tagihans', 'pelanggans.id', '=', 'tagihans.pelanggan_id')
-                    ->where('pelanggans.nomer_id', 'LIKE', '%JMK-GK%')
                     ->whereYear('tagihans.tanggal_mulai', $year)
                     ->whereNotNull('tagihans.read_at')
                     ->distinct('pelanggans.id')

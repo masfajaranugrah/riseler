@@ -40,17 +40,12 @@ class IncomeDateSheetExport implements FromCollection, WithHeadings, WithMapping
 
         return [
             $this->rowNumber,
-            $row->no_pelanggan ?? '-',
-            $row->nama_pelanggan ?? '-',
-            $row->no_whatsapp ?? '-',
+            $row->kode ?? '-',
+            $row->kategori ?? '-',
+            strtoupper($row->type_pembayaran ?? '-') ,
             (float) ($row->jumlah ?? 0),
-            $row->kecepatan ?? '-',
-            $row->tanggal_mulai ? Carbon::parse($row->tanggal_mulai)->format('d M Y') : '-',
-            $row->jatuh_tempo ? Carbon::parse($row->jatuh_tempo)->format('d M Y') : '-',
-            ucfirst($row->status_pembayaran ?? '-'),
-            $this->formatJenisTagihan($row),
-            $row->type_pembayaran ?? '-',
-            $row->tanggal_pembayaran ? Carbon::parse($row->tanggal_pembayaran)->format('d M Y') : '-',
+            $row->tanggal_masuk ? Carbon::parse($row->tanggal_masuk)->format('d M Y') : '-',
+            $row->tanggal_masuk ? Carbon::parse($row->tanggal_masuk)->format('H:i') : '-',
             $row->catatan ?? '-',
         ];
     }
@@ -59,17 +54,12 @@ class IncomeDateSheetExport implements FromCollection, WithHeadings, WithMapping
     {
         return [
             'NO',
-            'NO. ID PELANGGAN',
-            'NAMA LENGKAP',
-            'NO. WHATSAPP',
-            'JUMLAH PEMBAYARAN',
-            'KECEPATAN',
-            'TANGGAL MULAI',
-            'JATUH TEMPO',
-            'STATUS PEMBAYARAN',
-            'JENIS TAGIHAN',
+            'KODE',
+            'KATEGORI',
             'TYPE PEMBAYARAN',
-            'TANGGAL PEMBAYARAN',
+            'JUMLAH PEMASUKAN',
+            'TANGGAL',
+            'JAM',
             'CATATAN',
         ];
     }
@@ -80,36 +70,6 @@ class IncomeDateSheetExport implements FromCollection, WithHeadings, WithMapping
         $title = $date->format('d M');
         $title = str_replace(['*', ':', '/', '\\', '?', '[', ']'], '', $title);
         return substr($title, 0, 31);
-    }
-
-    protected function formatJenisTagihan($row): string
-    {
-        if (empty($row->tanggal_mulai)) {
-            return '-';
-        }
-
-        $period = Carbon::parse($row->tanggal_mulai)
-            ->locale('id')
-            ->translatedFormat('F Y');
-
-        // Check if payment date is after due date
-        $isLate = false;
-        if (!empty($row->tanggal_pembayaran) && !empty($row->jatuh_tempo)) {
-            $dueDate = Carbon::parse($row->jatuh_tempo);
-            $paymentDate = Carbon::parse($row->tanggal_pembayaran);
-            $isLate = $paymentDate->greaterThan($dueDate);
-        }
-
-        if ($row->status_pembayaran === 'lunas') {
-            $label = $isLate ? 'Outstanding' : 'Pembayaran';
-            return "{$label} {$period}";
-        }
-
-        if (in_array($row->status_pembayaran, ['belum bayar', 'proses_verifikasi'])) {
-            return "Outstanding {$period}";
-        }
-
-        return "Pembayaran {$period}";
     }
 
     public function styles(Worksheet $sheet)
