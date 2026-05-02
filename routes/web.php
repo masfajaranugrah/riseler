@@ -55,6 +55,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomBroadcastController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminProfileController;
 
 Route::middleware('web')->group(function () {
     Route::post('/broadcasting/auth', function (Request $request) {
@@ -550,11 +551,12 @@ Route::middleware(['auth', 'role:logistic'])->prefix('/dashboard/logistik/lapora
 
 
 // Chat Routes - Real-time messaging
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware(['auth', 'role:administrator,admin'])->group(function () {
+    Route::get('/dashboard/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
+    Route::post('/dashboard/admin/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password.update');
+});
 
+Route::middleware('auth')->group(function () {
     // Chat Admin - untuk admin melihat daftar user
     Route::get('/dashboard/admin/chat', [ChatController::class, 'admin'])->name('chat.admin');
 

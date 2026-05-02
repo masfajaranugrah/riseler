@@ -53,6 +53,8 @@ $navbarDetached = $navbarDetached ?? '';
 @php
     // Ambil user dari default atau guard 'nama_lengkap'
     $user = Auth::user() ?? (Auth::guard('customer')->check() ? Auth::guard('customer')->user() : null);
+    $webRole = strtolower(optional(Auth::user())->role ?? '');
+    $isAdminRole = in_array($webRole, ['administrator', 'admin'], true);
 
     // Tentukan inisial role atau nama
     $roleInitials = '-';
@@ -80,7 +82,7 @@ $navbarDetached = $navbarDetached ?? '';
 
             {{-- Profile Info --}}
             <li>
-              <a class="dropdown-item" href="{{ Route::has('profile.show') ? route('profile.show') : url('pages/profile-user') }}">
+              <a class="dropdown-item" href="{{ $isAdminRole ? route('admin.profile') : (Auth::guard('customer')->check() ? route('customer.profile') : '#') }}">
                 <div class="d-flex">
                   <div class="flex-shrink-0 me-2">
                     <div class="avatar avatar-online text-white d-flex justify-content-center align-items-center rounded-circle" style="width: 40px; height: 40px; background: #18181b;">

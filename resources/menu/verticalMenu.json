@@ -493,6 +493,16 @@
       "slug": "app-user",
       "url": "/dashboard/admin/tagihan/proses",
       "roles": "verifikasi"
+    },
+    {
+      "name": "Profile",
+      "icon": "menu-icon tf-icons ri-user-settings-line",
+      "slug": "admin.profile",
+      "url": "/dashboard/admin/profile",
+      "roles": [
+        "administrator",
+        "admin"
+      ]
     }
   ]
 }
