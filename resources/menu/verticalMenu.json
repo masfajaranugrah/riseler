@@ -96,23 +96,13 @@
       "submenu": [
         {
           "url": "/dashboard/admin/pelanggan",
-          "name": "List",
+          "name": "List Pelanggan",
           "slug": "app-user-list",
           "roles": [
             "administrator",
             "admin"
           ],
           "icon": "ri-user-search-line"
-        },
-        {
-          "url": "/dashboard/admin/pelanggan/upload/data",
-          "name": "Upload Excel",
-          "slug": "app-user-list",
-          "roles": [
-            "administrator",
-            "admin"
-          ],
-          "icon": "ri-file-excel-line"
         }
       ]
     },
@@ -134,21 +124,6 @@
             "admin"
           ],
           "icon": "ri-stack-line"
-        }
-      ]
-    },
-    {
-      "name": "Akun",
-      "icon": "menu-icon tf-icons ri-user-settings-line",
-      "slug": "app-user",
-      "roles": "administrator",
-      "submenu": [
-        {
-          "url": "/dashboard/admin/users",
-          "name": "List Akun",
-          "slug": "app-user-list",
-          "roles": "administrator",
-          "icon": "ri-user-star-line"
         }
       ]
     },
